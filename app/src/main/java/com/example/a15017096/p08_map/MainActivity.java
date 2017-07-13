@@ -53,17 +53,11 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onMapReady(GoogleMap googleMap) {
                                         map = googleMap;
-                                        int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
-                                                android.Manifest.permission.ACCESS_FINE_LOCATION);
-                                        if (permissionCheck == PermissionChecker.PERMISSION_GRANTED) {
-                                            map.setMyLocationEnabled(true);
-                                        } else {
+
                                             ActivityCompat.requestPermissions(MainActivity.this,
                                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
                                             // stops the action from proceeding further as permission not
                                             //  granted yet
-
-                                        }
 
                                         UiSettings ui = map.getUiSettings();
                                         ui.setZoomControlsEnabled(true);
@@ -144,6 +138,11 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION);
+                    if (permissionCheck == PermissionChecker.PERMISSION_GRANTED) {
+                        map.setMyLocationEnabled(true);
+                    }
 
                 } else {
                     // permission denied... notify user
