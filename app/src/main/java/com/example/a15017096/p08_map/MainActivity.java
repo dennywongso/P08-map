@@ -1,6 +1,9 @@
 package com.example.a15017096.p08_map;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
@@ -44,18 +47,24 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         SupportMapFragment mapFragment = (SupportMapFragment)
                 fm.findFragmentById(R.id.map);
+
+
         mapFragment.getMapAsync(new OnMapReadyCallback() {
                                     @Override
                                     public void onMapReady(GoogleMap googleMap) {
                                         map = googleMap;
                                         int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
                                                 android.Manifest.permission.ACCESS_FINE_LOCATION);
-
                                         if (permissionCheck == PermissionChecker.PERMISSION_GRANTED) {
                                             map.setMyLocationEnabled(true);
                                         } else {
-                                            Log.e("GMap - Permission", "GPS access has not been granted");
+                                            ActivityCompat.requestPermissions(MainActivity.this,
+                                                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+                                            // stops the action from proceeding further as permission not
+                                            //  granted yet
+
                                         }
+
                                         UiSettings ui = map.getUiSettings();
                                         ui.setZoomControlsEnabled(true);
 
@@ -125,5 +134,23 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+            case 0: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    // permission denied... notify user
+                    Toast.makeText(MainActivity.this, "Permission not granted",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 }
